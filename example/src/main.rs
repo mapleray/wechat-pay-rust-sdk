@@ -39,13 +39,16 @@ async fn pay_notify3(bytes: Bytes, req: HttpRequest) -> impl Responder {
     let wechat_pay = WechatPay::from_env();
     wechat_pay
         .h5_pay(H5Params::new(
+            "appid",
+            "mchid",
+            "notify_url",
             "测试支付1分",
             util::random_trade_no().as_str(),
             1.into(),
             H5SceneInfo::new("183.6.105.141", "ipa软件下载", "https://mydomain.com"),
-        )).await;
+        ))
+        .await;
     let pub_key = std::fs::read_to_string("pubkey.pem").unwrap();
-    let body = format!("{}\n{}\n{}\n", wechatpay_timestamp, wechatpay_nonce, body);
     wechat_pay
         .verify_signature(
             pub_key.as_str(),
@@ -107,8 +110,8 @@ async fn main() -> std::io::Result<()> {
             .service(pay_notify2)
             .service(home)
     })
-        .bind(("0.0.0.0", 8080))?
-        .workers(1)
-        .run()
-        .await
+    .bind(("0.0.0.0", 8080))?
+    .workers(1)
+    .run()
+    .await
 }

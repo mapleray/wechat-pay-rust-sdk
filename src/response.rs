@@ -92,3 +92,36 @@ pub struct CertificateResponse {
 }
 
 impl ResponseTrait for CertificateResponse {}
+
+#[derive(Debug, Deserialize)]
+pub struct WechatPayErrorDetail {
+    /// 指示错误参数的位置
+    pub field: Option<String>,
+    /// 错误的值
+    pub value: Option<serde_json::Value>,
+    /// 具体错误原因
+    pub issue: Option<String>,
+    /// 出错的位置
+    pub location: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TransferBillsResponse {
+    pub code: Option<String>,
+    pub message: Option<String>,
+    pub detail: Option<WechatPayErrorDetail>,
+    // 【商户单号】 商户系统内部的商家单号，要求此参数只能由数字、大小写字母组成，在商户系统内部唯一
+    pub out_bill_no: String,
+    // 【微信转账单号】 微信转账单号，微信商家转账系统返回的唯一标识
+    pub transfer_bill_no: String,
+    // 【单据创建时间】 单据受理成功时返回，按照使用rfc3339所定义的格式，格式为yyyy-MM-DDThh:mm:ss+TIMEZONE
+    pub create_time: String,
+    // 【单据状态】 商家转账订单状态
+    pub state: String,
+    // 【失败原因】 订单已失败或者已退资金时，会返回订单失败原因
+    pub fail_reason: Option<String>,
+    // 【跳转领取页面的package信息】 跳转微信支付收款页的package信息，APP调起用户确认收款或者JSAPI调起用户确认收款 时需要使用的参数。
+    pub package_info: Option<String>,
+}
+
+impl ResponseTrait for TransferBillsResponse {}

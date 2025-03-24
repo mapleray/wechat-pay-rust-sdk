@@ -201,6 +201,10 @@ impl ParamsTrait for SceneInfo {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct JsapiParams {
+    ///【AppID】微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。
+    pub appid: String,
+    ///【商户号】 微信支付商户号
+    pub mchid: String,
     ///【商品描述】 商品描述
     pub description: String,
     ///【商户订单号】 商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一。
@@ -231,6 +235,10 @@ impl ParamsTrait for JsapiParams {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct MicroParams {
+    ///【AppID】微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。
+    pub appid: String,
+    ///【商户号】 微信支付商户号
+    pub mchid: String,
     ///【商品描述】 商品描述
     pub description: String,
     ///【商户订单号】 商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一。
@@ -261,12 +269,16 @@ impl ParamsTrait for MicroParams {
 
 impl MicroParams {
     pub fn new<S: AsRef<str>>(
+        appid: S,
+        mchid: S,
         description: S,
         out_trade_no: S,
         amount: AmountInfo,
         payer: PayerInfo,
     ) -> Self {
         Self {
+            appid: appid.as_ref().to_string(),
+            mchid: mchid.as_ref().to_string(),
             description: description.as_ref().to_string(),
             out_trade_no: out_trade_no.as_ref().to_string(),
             amount,
@@ -281,12 +293,16 @@ impl MicroParams {
 
 impl JsapiParams {
     pub fn new<S: AsRef<str>>(
+        appid: S,
+        mchid: S,
         description: S,
         out_trade_no: S,
         amount: AmountInfo,
         payer: PayerInfo,
     ) -> Self {
         Self {
+            appid: appid.as_ref().to_string(),
+            mchid: mchid.as_ref().to_string(),
             description: description.as_ref().to_string(),
             out_trade_no: out_trade_no.as_ref().to_string(),
             amount,
@@ -312,10 +328,14 @@ unsafe impl Sync for SettleInfo {}
 
 #[derive(Serialize, Debug, Clone)]
 pub struct NativeParams {
+    ///【AppID】微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。
+    pub appid: String,
+    ///【商户号】 微信支付商户号
+    pub mchid: String,
     ///【商品描述】 商品描述
     pub description: String,
     ///【通知地址】 异步接收微信支付结果通知的回调地址，通知URL必须为外网可访问的URL，不能携带参数。 公网域名必须为HTTPS，如果是走专线接入，使用专线NAT IP或者私有回调域名可使用HTTP
-    /// pub notify_url: String,
+    pub notify_url: String,
     ///【商户订单号】 商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一。
     pub out_trade_no: String,
     ///【订单金额】 订单金额信息
@@ -348,10 +368,14 @@ impl ParamsTrait for NativeParams {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct AppParams {
+    ///【AppID】微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。
+    pub appid: String,
+    ///【商户号】 微信支付商户号
+    pub mchid: String,
     ///【商品描述】 商品描述
     pub description: String,
     ///【通知地址】 异步接收微信支付结果通知的回调地址，通知URL必须为外网可访问的URL，不能携带参数。 公网域名必须为HTTPS，如果是走专线接入，使用专线NAT IP或者私有回调域名可使用HTTP
-    /// pub notify_url: String,
+    pub notify_url: String,
     ///【商户订单号】 商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一。
     pub out_trade_no: String,
     ///【订单金额】 订单金额信息
@@ -386,9 +410,19 @@ impl ParamsTrait for AppParams {
 }
 
 impl AppParams {
-    pub fn new<S: AsRef<str>>(description: S, out_trade_no: S, amount: AmountInfo) -> Self {
+    pub fn new<S: AsRef<str>>(
+        appid: S,
+        mchid: S,
+        notify_url: S,
+        description: S,
+        out_trade_no: S,
+        amount: AmountInfo,
+    ) -> Self {
         Self {
+            appid: appid.as_ref().to_string(),
+            mchid: mchid.as_ref().to_string(),
             description: description.as_ref().to_string(),
+            notify_url: notify_url.as_ref().to_string(),
             out_trade_no: out_trade_no.as_ref().to_string(),
             amount,
             time_expire: None,
@@ -404,10 +438,14 @@ impl AppParams {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct H5Params {
+    ///【AppID】微信开放平台(移动应用)或微信公众平台(小程序、公众号)为开发者的应用程序提供的唯一标识。
+    pub appid: String,
+    ///【商户号】 微信支付商户号
+    pub mchid: String,
     ///【商品描述】 商品描述
     pub description: String,
     ///【通知地址】 异步接收微信支付结果通知的回调地址，通知URL必须为外网可访问的URL，不能携带参数。 公网域名必须为HTTPS，如果是走专线接入，使用专线NAT IP或者私有回调域名可使用HTTP
-    /// pub notify_url: String,
+    pub notify_url: String,
     ///【商户订单号】 商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一。
     pub out_trade_no: String,
     ///【订单金额】 订单金额信息
@@ -439,12 +477,18 @@ impl ParamsTrait for H5Params {
 
 impl H5Params {
     pub fn new<S: AsRef<str>>(
+        appid: S,
+        mchid: S,
+        notify_url: S,
         description: S,
         out_trade_no: S,
         amount: AmountInfo,
         scene_info: H5SceneInfo,
     ) -> Self {
         Self {
+            appid: appid.as_ref().to_string(),
+            mchid: mchid.as_ref().to_string(),
+            notify_url: notify_url.as_ref().to_string(),
             description: description.as_ref().to_string(),
             out_trade_no: out_trade_no.as_ref().to_string(),
             amount,
@@ -459,8 +503,18 @@ impl H5Params {
 }
 
 impl NativeParams {
-    pub fn new<S: AsRef<str>>(description: S, out_trade_no: S, amount: AmountInfo) -> Self {
+    pub fn new<S: AsRef<str>>(
+        appid: S,
+        mchid: S,
+        notify_url: S,
+        description: S,
+        out_trade_no: S,
+        amount: AmountInfo,
+    ) -> Self {
         Self {
+            appid: appid.as_ref().to_string(),
+            mchid: mchid.as_ref().to_string(),
+            notify_url: notify_url.as_ref().to_string(),
             description: description.as_ref().to_string(),
             out_trade_no: out_trade_no.as_ref().to_string(),
             amount,
@@ -473,6 +527,56 @@ impl NativeParams {
         }
     }
 }
+
+#[derive(Serialize, Debug, Clone)]
+pub struct TransferSceneReportInfo {
+    // 【信息类型】 不能超过15个字符，商户所属转账场景下的信息类型，此字段内容为固定值，需严格按照转账场景报备信息字段说明传参。
+    pub info_type: String,
+    // 【信息内容】 不能超过32个字符，商户所属转账场景下的信息内容，商户可按实际业务场景自定义传参，需严格按照转账场景报备信息字段说明传参。
+    pub info_content: String,
+}
+
+unsafe impl Send for TransferSceneReportInfo {}
+
+unsafe impl Sync for TransferSceneReportInfo {}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct TransferBillsParams {
+    ///【商户AppID】 微信支付商户号绑定的appid
+    pub appid: String,
+    ///【商户单号】 商户系统内部的商家单号，要求此参数只能由数字、大小写字母组成，在商户系统内部唯一
+    pub out_bill_no: String,
+    ///【转账场景ID】 该笔转账使用的转账场景，可前往“商户平台-产品中心-商家转账”中申请。如：1001-现金营销
+    pub transfer_scene_id: String,
+    ///【收款用户OpenID】 用户在商户appid下的唯一标识。发起转账前需获取到用户的OpenID
+    pub openid: String,
+    ///【收款用户姓名】 收款方真实姓名。需要加密传入，支持标准RSA算法和国密算法，公钥由微信侧提供。
+    ///    转账金额 >= 2,000元时，该笔明细必须填写
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_name: Option<String>,
+    ///【转账金额】 转账金额单位为“分”。
+    pub transfer_amount: i32,
+    ///【通知地址】 异步接收微信支付结果通知的回调地址，通知URL必须为外网可访问的URL，不能携带参数。 公网域名必须为HTTPS，如果是走专线接入，使用专线NAT IP或者私有回调域名可使用HTTP
+    pub notify_url: String,
+    ///【转账备注】 转账备注，用户收款时可见该备注信息，UTF8编码，最多允许32个字符
+    pub transfer_remark: String,
+
+    ///【用户收款感知】 用户收款时感知到的收款原因将根据转账场景自动展示默认内容。如有其他展示需求，可在本字段传入。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub user_recv_perception: Option<String>,
+    ///【转账场景报备信息】 各转账场景下需报备的内容，商户需要按照所属转账场景规则传参，详见转账场景报备信息字段说明。
+    pub transfer_scene_report_infos: Vec<TransferSceneReportInfo>,
+}
+
+impl ParamsTrait for TransferBillsParams {
+    fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+}
+
+unsafe impl Send for TransferBillsParams {}
+
+unsafe impl Sync for TransferBillsParams {}
 
 unsafe impl Send for NativeParams {}
 

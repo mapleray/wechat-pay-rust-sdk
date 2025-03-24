@@ -1,3 +1,4 @@
+use crate::debug;
 use crate::error::PayError;
 use crate::model::AppParams;
 use crate::model::H5Params;
@@ -5,6 +6,7 @@ use crate::model::JsapiParams;
 use crate::model::MicroParams;
 use crate::model::NativeParams;
 use crate::model::ParamsTrait;
+use crate::model::TransferBillsParams;
 use crate::pay::{WechatPay, WechatPayTrait};
 use crate::request::HttpMethod;
 use crate::response::AppResponse;
@@ -12,10 +14,9 @@ use crate::response::H5Response;
 use crate::response::JsapiResponse;
 use crate::response::MicroResponse;
 use crate::response::ResponseTrait;
+use crate::response::TransferBillsResponse;
 use crate::response::{CertificateResponse, NativeResponse};
 use reqwest::header::{HeaderMap, REFERER};
-use serde_json::{Map, Value};
-use crate::{debug};
 
 impl WechatPay {
     pub async fn pay<P: ParamsTrait, R: ResponseTrait>(
@@ -24,13 +25,8 @@ impl WechatPay {
         url: &str,
         json: P,
     ) -> Result<R, PayError> {
-        let json_str = json.to_json();
-        debug!("json_str: {}", json_str);
-        let mut map: Map<String, Value> = serde_json::from_str(&json_str)?;
-        map.insert("appid".to_owned(), self.appid().into());
-        map.insert("mchid".to_owned(), self.mch_id().into());
-        map.insert("notify_url".to_owned(), self.notify_url().into());
-        let body = serde_json::to_string(&map)?;
+        let body = json.to_json();
+        debug!("json_str: {}", body);
         let headers = self.build_header(method.clone(), url, body.as_str())?;
         let client = reqwest::Client::new();
         let url = format!("{}{}", self.base_url(), url);
@@ -74,6 +70,7 @@ impl WechatPay {
         let url = "/v3/pay/transactions/h5";
         self.pay(HttpMethod::POST, url, params).await
     }
+
     pub async fn app_pay(&self, params: AppParams) -> Result<AppResponse, PayError> {
         let url = "/v3/pay/transactions/app";
         self.pay(HttpMethod::POST, url, params)
@@ -96,6 +93,7 @@ impl WechatPay {
                 result
             })
     }
+
     pub async fn micro_pay(&self, params: MicroParams) -> Result<MicroResponse, PayError> {
         let url = "/v3/pay/transactions/jsapi";
         self.pay(HttpMethod::POST, url, params)
@@ -107,6 +105,15 @@ impl WechatPay {
                 result
             })
     }
+
+    pub async fn transfer_bills(
+        &self,
+        params: TransferBillsParams,
+    ) -> Result<TransferBillsResponse, PayError> {
+        let url = "/v3/fund-app/mch-transfer/transfer-bills";
+        self.pay(HttpMethod::POST, url, params).await
+    }
+
     pub async fn native_pay(&self, params: NativeParams) -> Result<NativeResponse, PayError> {
         let url = "/v3/pay/transactions/native";
         self.pay(HttpMethod::POST, url, params).await
@@ -116,9 +123,10 @@ impl WechatPay {
         let url = "/v3/certificates";
         self.get_pay(url).await
     }
+
     pub async fn get_weixin<S>(&self, h5_url: S, referer: S) -> Result<Option<String>, PayError>
-        where
-            S: AsRef<str>,
+    where
+        S: AsRef<str>,
     {
         let client = reqwest::Client::new();
         let mut headers = HeaderMap::new();
@@ -162,7 +170,14 @@ mod tests {
         dotenv().ok();
         let wechat_pay = WechatPay::from_env();
         let body = wechat_pay
-            .native_pay(NativeParams::new("测试支付1分", "1243243", 1.into()))
+            .native_pay(NativeParams::new(
+                "appid",
+                "mchid",
+                "notify_url",
+                "测试支付1分",
+                "1243243",
+                1.into(),
+            ))
             .await
             .expect("pay fail");
         debug!("body: {:?}", body);
